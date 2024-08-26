@@ -10,6 +10,13 @@ async function getSession(sessionId: string) {
   return session;
 }
 
+async function getCustomer(customerId: string) {
+  if (!customerId) return null;
+
+  const customer = await stripe.customers.retrieve(customerId);
+  return customer;
+}
+
 const ProductConfirmationPage = async ({
   params,
   searchParams,
@@ -17,54 +24,57 @@ const ProductConfirmationPage = async ({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
-  const sessionId = searchParams.sessionId || "";
-  if (sessionId === "" || sessionId === undefined || !sessionId) {
-    return;
-  }
+  const sessionId = searchParams.session_id || "";
 
   const currentCheckoutSession = await getSession(sessionId as string);
+  const customer = await getCustomer(currentCheckoutSession.customer as string);
+
+  console.log("current checkout session", currentCheckoutSession);
+  console.log("customer", customer);
 
   if (currentCheckoutSession.status === "open") {
     return (
-      <div>
-        <h2 className="text-2xl font-bold mb-4 text-red-400">Failure</h2>
-        <p>Payment did not work</p>
-        <Button asChild>
-          <Link href={"/"}>Return to Home</Link>
-        </Button>
-      </div>
+      <section className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
+        <div>
+          <h2 className="text-2xl font-bold mb-4 text-red-400">
+            Payment Failed
+          </h2>
+
+          <Button asChild>
+            <Link href={"/"}>Return to Home</Link>
+          </Button>
+        </div>
+      </section>
     );
   }
 
   if (currentCheckoutSession.status === "complete") {
     return (
-      <div>
-        <h2 className="text-2xl font-bold mb-4 text-green-400">
-          Successfully Done!!!
-        </h2>
-        <p>Payment Complete</p>
-        <p>
-          Your Stripe Customer id is {currentCheckoutSession.customer as string}
-        </p>
+      <section className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
+        <div>
+          <h2 className="text-2xl font-bold mb-4 text-green-400">
+            Successfully Done!!!
+          </h2>
+          <p>Payment Complete</p>
+          <p>
+            Your Stripe Customer id is {JSON.stringify(customer)}
+            {currentCheckoutSession.customer as string}
+          </p>
 
-        <Button asChild>
-          <Link href={"/"}>Return to Home</Link>
-        </Button>
-      </div>
+          <Button asChild>
+            <Link href={"/"}>Return to Home</Link>
+          </Button>
+        </div>
+      </section>
     );
   }
 
   return (
     <section className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">
-      <div>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-          Return Page after checkout
-        </h1>
-        {/* might not need it as we are fetching the search params from the url in server component */}
-        <Suspense>
-          <ProductConfirmation />
-        </Suspense>
-      </div>
+      <h2>Something Went Wrong......</h2>
+      <Button asChild>
+        <Link href={"/"}>Return to Home</Link>
+      </Button>
     </section>
   );
 };
