@@ -6,8 +6,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "@/lib/convertSubcurrency";
 import CheckoutPage from "@/components/CheckoutPage";
-import { games } from "@/lib/products";
+import { games, subscriptions, testSubscriptions } from "@/lib/products";
 import GameCard from "@/components/GameCard";
+import SubscriptionCard from "@/components/SubscriptionCard";
 
 export default function Home() {
   return (
@@ -21,6 +22,17 @@ export default function Home() {
             return (
               <div key={game.id}>
                 <GameCard game={game} />
+              </div>
+            );
+          })}
+        </div>
+
+        <h1>Our Available Subscriptions</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {testSubscriptions.map((sub) => {
+            return (
+              <div key={sub.id}>
+                <SubscriptionCard product={sub} />
               </div>
             );
           })}

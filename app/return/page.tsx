@@ -29,9 +29,6 @@ const ProductConfirmationPage = async ({
   const currentCheckoutSession = await getSession(sessionId as string);
   const customer = await getCustomer(currentCheckoutSession.customer as string);
 
-  console.log("current checkout session", currentCheckoutSession);
-  console.log("customer", customer);
-
   if (currentCheckoutSession.status === "open") {
     return (
       <section className="max-w-6xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-blue-500 to-purple-500">

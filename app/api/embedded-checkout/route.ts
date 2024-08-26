@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     if (!name || !price || !quantity) {
       return NextResponse.json(
-        { error: "Product name, price, and quantity are required" },
+        { error: "Product name, price, quantity and mode are required" },
         { status: 400 }
       );
     }
@@ -45,6 +45,10 @@ export async function POST(req: Request) {
       ui_mode: "embedded",
       payment_method_types: ["card"],
       mode: "payment",
+      metadata: {
+        // userId: session.userId -> get the current auth session,
+        userId: "12345",
+      },
       line_items: [
         {
           price_data: {
